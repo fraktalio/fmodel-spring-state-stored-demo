@@ -1,4 +1,4 @@
-# fmodel-spring-demo (EventSourcing)
+# fmodel-spring-demo (StateStored)
 
 A demo/example project for the imaginary restaurant and order management.
 
@@ -36,30 +36,10 @@ with(orderDecider) {
 }
 ```
 
-## Fstore-SQL
-
-This project is using [PostgreSQL powered event store](https://github.com/fraktalio/fstore-sql), optimized for event
-sourcing and event streaming.
-
-**Fstore-SQL** is enabling event-sourcing and *pool-based* event-streaming patterns by using SQL (PostgreSQL) only.
-
-- `event-sourcing` data pattern (by using PostgreSQL database) to durably store events
-    - Append events to the ordered, append-only log, using `entity id`/`decider id` as a key
-    - Load all the events for a single entity/decider, in an ordered sequence, using the `entity id`/`decider id` as a
-      key
-    - Support optimistic locking/concurrency
-- `event-streaming` to concurrently coordinate read over a streams of events from multiple consumer instances
-    - Support real-time concurrent consumers to project events into view/query models
-
-
 ## Tools
 
 - [EventModeling](https://eventmodeling.org/posts/what-is-event-modeling/) - a method of describing systems using an example of how information has changed within them over time.
 
-## Patterns
-
-- EventSourcing
-- CQRS
 
 ## Prerequisites
 
@@ -72,7 +52,7 @@ sourcing and event streaming.
 - [Kotlin](https://kotlinlang.org/) (Coroutines, Serialization)
 - Spring ([Reactive Web](https://docs.spring.io/spring-boot/docs/3.0.4/reference/htmlsingle/#web.reactive),[R2DBC](https://spring.io/guides/gs/accessing-data-r2dbc/), RSocket)
 - [Testcontainers](https://www.testcontainers.org/)
-- [PostgreSQL](https://www.postgresql.org/) ([event store](https://github.com/fraktalio/fstore-sql), projections)
+- [PostgreSQL](https://www.postgresql.org/) (projections)
 
 ## Run & Test
 
