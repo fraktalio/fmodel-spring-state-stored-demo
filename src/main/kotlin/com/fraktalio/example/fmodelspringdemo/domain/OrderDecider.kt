@@ -4,6 +4,7 @@ import com.fraktalio.fmodel.domain.Decider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.serialization.Serializable
 
 /**
  * A convenient type alias for Decider<OrderCommand?, Order?, OrderEvent?>
@@ -55,9 +56,11 @@ fun orderDecider() = OrderDecider(
 /**
  * A model of the Order / It represents the state of the Order.
  */
+@Serializable
 data class Order(
     val id: OrderId,
     val restaurantId: RestaurantId,
     val status: OrderStatus,
+    @Serializable(with = ImmutableListSerializer::class)
     val lineItems: ImmutableList<OrderLineItem>
 )

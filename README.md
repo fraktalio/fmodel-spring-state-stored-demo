@@ -1,6 +1,13 @@
 # fmodel-spring-demo (StateStored)
 
 A demo/example project for the imaginary restaurant and order management.
+It is backing the [Fmodel Reference Guide](https://fraktalio.com/fmodel/).
+
+It demonstrates how to run our unique domain and orchestrate it in a Traditional/State-Stored way.
+
+> For Event-Sourced flavor of the system, please check [https://github.com/fraktalio/fmodel-spring-demo](https://github.com/fraktalio/fmodel-spring-demo), and notice:
+> - how the `domain` package/model is the same / state-stored system and event-sourced system share the same domain logic
+> - `application and adapters are different / we only choose to compose and run them differentlly`
 
 ![event model image](.assets/restaurant-model.jpg)
 *this bleuprint is an outcome of the [event-modeling](https://eventmodeling.org/posts/what-is-event-modeling/) process*
@@ -12,7 +19,7 @@ This project is using [Fmodel](https://github.com/fraktalio/fmodel) - Kotlin, mu
 **Fmodel** is:
 
 - enabling functional, algebraic and reactive domain modeling with Kotlin programming language.
-- inspired by DDD, EventSourcing and Functional programming communities, yet implements these ideas and
+- inspired by DDD and Functional programming communities, yet implements these ideas and
   concepts in idiomatic Kotlin, which in turn makes our code
     - less error-prone,
     - easier to understand,
@@ -20,14 +27,15 @@ This project is using [Fmodel](https://github.com/fraktalio/fmodel) - Kotlin, mu
     - type-safe and
     - thread-safe.
 - enabling illustrating requirements using examples
-    - the requirements are presented as scenarios. 
-    - a scenario is an example of the system’s behavior from the users’ perspective, 
+    - the requirements are presented as scenarios.
+    - a scenario is an example of the system’s behavior from the users’ perspective,
     - and they are specified using the Given-When-Then structure to create a testable/runnable specification
-      - Given `< some precondition(s) / events >`
-      - When `< an action/trigger occurs / commands>`
-      - Then `< some post condition / events >`
+        - Given `< some precondition(s) / events >`
+        - When `< an action/trigger occurs / commands>`
+        - Then `< some post condition / events >`
 
 Check the [tests](src/test/kotlin/com/fraktalio/example/fmodelspringdemo/domain/OrderDeciderTest.kt)!
+
 ```kotlin
 with(orderDecider) {
     givenEvents(listOf(orderCreatedEvent)) {         // PRE CONDITIONS
@@ -38,8 +46,8 @@ with(orderDecider) {
 
 ## Tools
 
-- [EventModeling](https://eventmodeling.org/posts/what-is-event-modeling/) - a method of describing systems using an example of how information has changed within them over time.
-
+- [EventModeling](https://eventmodeling.org/posts/what-is-event-modeling/) - a method of describing systems using an
+  example of how information has changed within them over time.
 
 ## Prerequisites
 
@@ -50,9 +58,10 @@ with(orderDecider) {
 
 - [Fmodel - Domain modeling with Kotlin](https://github.com/fraktalio/fmodel)
 - [Kotlin](https://kotlinlang.org/) (Coroutines, Serialization)
-- Spring ([Reactive Web](https://docs.spring.io/spring-boot/docs/3.0.4/reference/htmlsingle/#web.reactive),[R2DBC](https://spring.io/guides/gs/accessing-data-r2dbc/), RSocket)
+- Spring ([Reactive Web](https://docs.spring.io/spring-boot/docs/3.0.4/reference/htmlsingle/#web.reactive),[R2DBC](https://spring.io/guides/gs/accessing-data-r2dbc/),
+RSocket)
 - [Testcontainers](https://www.testcontainers.org/)
-- [PostgreSQL](https://www.postgresql.org/) (projections)
+- [PostgreSQL](https://www.postgresql.org/)
 
 ## Run & Test
 

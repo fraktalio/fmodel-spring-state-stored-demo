@@ -1,5 +1,7 @@
 package com.fraktalio.example.fmodelspringdemo.adapter.websocket
 
+import com.fraktalio.example.fmodelspringdemo.adapter.persistence.RestaurantEntity
+import com.fraktalio.example.fmodelspringdemo.application.AggregateState
 import com.fraktalio.example.fmodelspringdemo.domain.*
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +24,7 @@ import java.net.URI
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestConstructor(autowireMode = ALL)
-class AggregateRsocketCommandControllerTest(
+class AggregateRsocketControllerTest(
     private val rsocketBuilder: RSocketRequester.Builder,
     private val rSocketStrategies: RSocketStrategies,
     @LocalServerPort val serverPort: Int
@@ -49,7 +51,14 @@ class AggregateRsocketCommandControllerTest(
             rSocketRequester
                 .route("commands")
                 .dataWithType(flowOf<Command>(createRestaurantCommand))
-                .retrieveFlow<Event>()
+                .retrieveFlow<AggregateState>()
+                .toList().size
+        ).isEqualTo(1)
+
+        assertThat(
+            rSocketRequester
+                .route("queries.restaurants")
+                .retrieveFlow<RestaurantEntity>()
                 .toList().size
         ).isEqualTo(1)
     }

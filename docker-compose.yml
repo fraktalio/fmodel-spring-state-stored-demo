@@ -13,7 +13,7 @@ services:
       - fmodel-net
   #### Applications
   fmodel-spring-demo:
-    image: docker.io/library/fmodel-spring-demo:0.0.1-SNAPSHOT
+    image: docker.io/library/fmodel-spring-state-stored-demo:0.0.1-SNAPSHOT
     depends_on:
       - postgres
     environment:

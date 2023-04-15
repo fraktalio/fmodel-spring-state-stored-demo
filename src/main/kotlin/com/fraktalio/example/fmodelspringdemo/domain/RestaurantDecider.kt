@@ -3,6 +3,7 @@ package com.fraktalio.example.fmodelspringdemo.domain
 import com.fraktalio.fmodel.domain.Decider
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.serialization.Serializable
 import java.util.stream.Collectors
 
 /**
@@ -89,6 +90,7 @@ fun restaurantDecider() = RestaurantDecider(
  * @property menu Current [RestaurantMenu] of the restaurant
  * @constructor Creates Restaurant
  */
+@Serializable
 data class Restaurant(
     val id: RestaurantId,
     val name: RestaurantName,

@@ -1,8 +1,8 @@
 package com.fraktalio.example.fmodelspringdemo.adapter.persistence
 
 import com.fraktalio.example.fmodelspringdemo.adapter.deciderId
-import com.fraktalio.example.fmodelspringdemo.application.MaterializedViewState
-import com.fraktalio.example.fmodelspringdemo.application.MaterializedViewStateRepository
+import com.fraktalio.example.fmodelspringdemo.application.AggregateState
+import com.fraktalio.example.fmodelspringdemo.application.AggregateStateRepository
 import com.fraktalio.example.fmodelspringdemo.domain.*
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -27,7 +27,7 @@ import java.util.*
 private val logger = KotlinLogging.logger {}
 
 /**
- * View repository implementation
+ * Aggregate repository implementation
  *
  * @property restaurantRepository Restaurant repository
  * @property orderRepository Restaurant Order repository
@@ -39,48 +39,48 @@ private val logger = KotlinLogging.logger {}
  * @author Иван Дугалић / Ivan Dugalic / @idugalic
  */
 
-internal open class MaterializedViewStateRepositoryImpl(
+internal open class AggregateStateRepositoryImpl(
     private val restaurantRepository: RestaurantCoroutineRepository,
     private val orderRepository: OrderCoroutineRepository,
     private val orderItemRepository: OrderItemCoroutineRepository,
     private val menuItemRepository: MenuItemCoroutineRepository,
     private val operator: TransactionalOperator
-) : MaterializedViewStateRepository {
+) : AggregateStateRepository {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val dbDispatcher = Dispatchers.IO.limitedParallelism(10)
-    override suspend fun Event?.fetchState(): MaterializedViewState =
+    override suspend fun Command?.fetchState(): AggregateState =
         withContext(dbDispatcher) {
             try {
                 logger.debug { "fetching state by event ${this@fetchState} started ..." }
                 val result = when (this@fetchState) {
-                    is OrderEvent -> MaterializedViewState(
-                        null,
+                    is OrderCommand -> AggregateState(
                         orderRepository
                             .findById(deciderId())
                             .toOrder(orderItemRepository
                                 .findByOrderId(deciderId())
                                 .map { it.toOrderLineItem() }
                                 .toImmutableList()
-                            )
+                            ),
+                        null,
                     )
 
-                    is RestaurantEvent -> {
+                    is RestaurantCommand -> {
                         val restaurantEntity = restaurantRepository.findById(deciderId())
                         val menuItemEntities = menuItemRepository.findByRestaurantId(deciderId())
-                        MaterializedViewState(
+                        AggregateState(
+                            null,
                             restaurantEntity?.toRestaurant(
                                 RestaurantMenu(
                                     menuItemEntities.map { it.toMenuItem() }.toImmutableList(),
                                     UUID.fromString(restaurantEntity.menuId),
                                     restaurantEntity.cuisine
                                 )
-                            ),
-                            null
+                            )
                         )
                     }
 
-                    null -> MaterializedViewState(null, null)
+                    null -> AggregateState(null, null)
                 }
                 logger.debug { "fetching state by event $this completed with success" }
                 result
@@ -90,7 +90,7 @@ internal open class MaterializedViewStateRepositoryImpl(
             }
         }
 
-    override suspend fun MaterializedViewState.save(): MaterializedViewState =
+    override suspend fun AggregateState.save(): AggregateState =
         withContext(dbDispatcher) {
             logger.debug { "saving the state started ..." }
             operator.executeAndAwait { transaction ->
@@ -136,7 +136,7 @@ internal open class MaterializedViewStateRepositoryImpl(
 
 
     private fun RestaurantEntity?.toRestaurant(menu: RestaurantMenu) = when {
-        this != null -> RestaurantViewState(
+        this != null -> Restaurant(
             RestaurantId(UUID.fromString(id)),
             RestaurantName(name),
             menu
@@ -145,9 +145,9 @@ internal open class MaterializedViewStateRepositoryImpl(
         else -> null
     }
 
-    private fun OrderEntity?.toOrder(lineItems: ImmutableList<OrderLineItem>): OrderViewState? =
+    private fun OrderEntity?.toOrder(lineItems: ImmutableList<OrderLineItem>): Order? =
         when {
-            this != null -> OrderViewState(
+            this != null -> Order(
                 OrderId(UUID.fromString(id)),
                 RestaurantId(UUID.fromString(restaurantId)),
                 state,
@@ -169,7 +169,7 @@ internal open class MaterializedViewStateRepositoryImpl(
         MenuItem(MenuItemId(id ?: ""), MenuItemName(name), Money(this.price))
 
 
-    private fun RestaurantViewState.toRestaurantEntity(isNew: Boolean) = RestaurantEntity(
+    private fun Restaurant.toRestaurantEntity(isNew: Boolean) = RestaurantEntity(
         id.value.toString(),
         Long.MIN_VALUE,
         name.value,
@@ -183,7 +183,7 @@ internal open class MaterializedViewStateRepositoryImpl(
     )
 
 
-    private fun OrderViewState.toOrderEntity(isNew: Boolean) = OrderEntity(
+    private fun Order.toOrderEntity(isNew: Boolean) = OrderEntity(
         id.value.toString(),
         Long.MIN_VALUE,
         restaurantId.value.toString(),

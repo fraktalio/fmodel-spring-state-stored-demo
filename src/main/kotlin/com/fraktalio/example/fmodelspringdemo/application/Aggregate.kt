@@ -1,15 +1,15 @@
 package com.fraktalio.example.fmodelspringdemo.application
 
 import com.fraktalio.example.fmodelspringdemo.domain.*
-import com.fraktalio.fmodel.application.EventLockingRepository
-import com.fraktalio.fmodel.application.EventSourcingLockingOrchestratingAggregate
-import com.fraktalio.fmodel.application.eventSourcingLockingOrchestratingAggregate
+import com.fraktalio.fmodel.application.StateRepository
+import com.fraktalio.fmodel.application.StateStoredOrchestratingAggregate
+import com.fraktalio.fmodel.application.stateStoredOrchestratingAggregate
 import com.fraktalio.fmodel.domain.combine
 import kotlinx.coroutines.FlowPreview
-import java.util.*
+import kotlinx.serialization.Serializable
 
-internal typealias AggregateEventRepository = EventLockingRepository<Command?, Event?, UUID?>
-internal typealias Aggregate = EventSourcingLockingOrchestratingAggregate<Command?, Pair<Order?, Restaurant?>, Event?, UUID?>
+internal typealias AggregateStateRepository = StateRepository<Command?, AggregateState>
+internal typealias Aggregate = StateStoredOrchestratingAggregate<Command?, AggregateState, Event?>
 
 /**
  * One, big aggregate that is `combining` all deciders: [orderDecider], [restaurantDecider].
@@ -20,7 +20,7 @@ internal typealias Aggregate = EventSourcingLockingOrchestratingAggregate<Comman
  * @param restaurantDecider restaurantDecider is used internally to handle commands and produce new events.
  * @param orderSaga orderSaga is used internally to react on [RestaurantEvent]s and produce commands of type [OrderCommand]
  * @param restaurantSaga restaurantSaga is used internally to react on [OrderEvent]s and produce commands of type [RestaurantCommand]
- * @param eventRepository is used to store the newly produced events of the Restaurant and/or Restaurant order together
+ * @param stateRepository is used to store the newly produced state of the Aggregate
  *
  * @author Иван Дугалић / Ivan Dugalic / @idugalic
  */
@@ -30,16 +30,23 @@ internal fun aggregate(
     restaurantDecider: RestaurantDecider,
     orderSaga: OrderSaga,
     restaurantSaga: RestaurantSaga,
-    eventRepository: AggregateEventRepository
+    stateRepository: AggregateStateRepository
 
-): Aggregate = eventSourcingLockingOrchestratingAggregate(
-    // Combining two deciders into one.
-    decider = orderDecider.combine(restaurantDecider),
-    // How and where do you want to store new events.
-    eventRepository = eventRepository,
+): Aggregate = stateStoredOrchestratingAggregate(
+    // Combining two deciders into one, and mapping the `Pair` into convenient domain specific data class `AggregateState`
+    decider = orderDecider
+        .combine(restaurantDecider)
+        .dimapOnState(
+            fl = { aggregateState: AggregateState -> Pair(aggregateState.order, aggregateState.restaurant) },
+            fr = { pair: Pair<Order?, Restaurant?> -> AggregateState(pair.first, pair.second) }
+        ),
+    // How and where do you want to store new state.
+    stateRepository = stateRepository,
     // Combining individual choreography Sagas into one orchestrating Saga.
     saga = orderSaga.combine(restaurantSaga)
 )
 
+@Serializable
+data class AggregateState(val order: Order?, val restaurant: Restaurant?)
 
 
