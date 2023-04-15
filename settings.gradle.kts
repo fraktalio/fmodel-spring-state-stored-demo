@@ -1,1 +1,1 @@
-rootProject.name = "fmodel-spring-demo"
+rootProject.name = "fmodel-spring-state-stored-demo"
