@@ -5,8 +5,10 @@ It is backing the [Fmodel Reference Guide](https://fraktalio.com/fmodel/).
 
 It demonstrates how to run our unique domain and orchestrate it in a Traditional/State-Stored way.
 
-> For Event-Sourced flavor of the system, please check [https://github.com/fraktalio/fmodel-spring-demo](https://github.com/fraktalio/fmodel-spring-demo), and notice:
-> - how the `domain` package/model is the same / state-stored system and event-sourced system share the same domain logic
+> For Event-Sourced flavor of the system, please
+> check [https://github.com/fraktalio/fmodel-spring-demo](https://github.com/fraktalio/fmodel-spring-demo), and notice:
+> - how the `domain` package/model is the same / state-stored system and event-sourced system share the same domain
+    logic
 > - `application and adapters are different / we only choose to compose and run them differentlly`
 
 ![event model image](.assets/restaurant-model.jpg)
@@ -58,7 +60,8 @@ with(orderDecider) {
 
 - [Fmodel - Domain modeling with Kotlin](https://github.com/fraktalio/fmodel)
 - [Kotlin](https://kotlinlang.org/) (Coroutines, Serialization)
-- Spring ([Reactive Web](https://docs.spring.io/spring-boot/docs/3.0.4/reference/htmlsingle/#web.reactive),[R2DBC](https://spring.io/guides/gs/accessing-data-r2dbc/),
+-
+Spring ([Reactive Web](https://docs.spring.io/spring-boot/docs/3.0.4/reference/htmlsingle/#web.reactive),[R2DBC](https://spring.io/guides/gs/accessing-data-r2dbc/),
 RSocket)
 - [Testcontainers](https://www.testcontainers.org/)
 - [PostgreSQL](https://www.postgresql.org/)
@@ -97,6 +100,9 @@ Run application and PostgreSQL:
 ```shell
 docker-compose up
 ```
+
+## Explore the REST API
+Explore the REST API using the [test.http](test.http) file.
 
 ## Further Reading
 
