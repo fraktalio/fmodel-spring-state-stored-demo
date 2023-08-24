@@ -3,9 +3,8 @@ package com.fraktalio.example.fmodelspringdemo.application
 import com.fraktalio.example.fmodelspringdemo.domain.*
 import com.fraktalio.fmodel.application.StateRepository
 import com.fraktalio.fmodel.application.StateStoredOrchestratingAggregate
-import com.fraktalio.fmodel.application.stateStoredOrchestratingAggregate
 import com.fraktalio.fmodel.domain.combine
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.Serializable
 
 internal typealias AggregateStateRepository = StateRepository<Command?, AggregateState>
@@ -24,7 +23,7 @@ internal typealias Aggregate = StateStoredOrchestratingAggregate<Command?, Aggre
  *
  * @author Иван Дугалић / Ivan Dugalic / @idugalic
  */
-@OptIn(FlowPreview::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 internal fun aggregate(
     orderDecider: OrderDecider,
     restaurantDecider: RestaurantDecider,
@@ -32,7 +31,7 @@ internal fun aggregate(
     restaurantSaga: RestaurantSaga,
     stateRepository: AggregateStateRepository
 
-): Aggregate = stateStoredOrchestratingAggregate(
+): Aggregate = StateStoredOrchestratingAggregate(
     // Combining two deciders into one, and mapping the `Pair` into convenient domain specific data class `AggregateState`
     decider = orderDecider
         .combine(restaurantDecider)

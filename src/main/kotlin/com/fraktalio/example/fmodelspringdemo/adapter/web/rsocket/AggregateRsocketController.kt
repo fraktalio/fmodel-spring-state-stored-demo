@@ -19,7 +19,6 @@ internal class AggregateRsocketController(
     private val aggregate: Aggregate,
     private val repository: RestaurantCoroutineRepository
 ) {
-    @OptIn(FlowPreview::class)
     @MessageMapping("commands")
     fun handleCommand(@Payload commands: Flow<Command>): Flow<AggregateState> =
         aggregate.handle(commands)
