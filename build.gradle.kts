@@ -26,7 +26,7 @@ repositories {
     mavenCentral()
 }
 
-extra["testcontainersVersion"] = "1.19.3"
+extra["testcontainersVersion"] = "1.19.4"
 extra["fmodelVersion"] = "3.5.0"
 extra["kotlinxSerializationJson"] = "1.6.2"
 extra["kotlinxCollectionsImmutable"] = "0.3.7"
