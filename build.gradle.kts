@@ -27,7 +27,7 @@ repositories {
 }
 
 extra["testcontainersVersion"] = "1.20.1"
-extra["fmodelVersion"] = "3.5.1"
+extra["fmodelVersion"] = "3.7.0"
 extra["kotlinxSerializationJson"] = "1.7.1"
 extra["kotlinxCollectionsImmutable"] = "0.3.7"
 extra["kotlinLogging"] = "3.0.5"
